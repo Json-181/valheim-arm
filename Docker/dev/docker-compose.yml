@@ -18,6 +18,7 @@ services:
       - SERVER_SAVE_INTERVAL=1800
       - SERVER_BACKUPS=6
       - ADMIN_STEAM_IDS=76561198852653445,76561198973282644
+      - TZ=America/New_York
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server
