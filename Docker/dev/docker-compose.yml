@@ -9,10 +9,14 @@ services:
       - "2457:2457/udp"
       - "2458:2458/udp"
     environment:
-      - SERVER_NAME=Valheim_Server
-      - SERVER_WORLD=tsx_world
-      - SERVER_PASSWORD=123456780
+      - SERVER_NAME=Scrublheim2026
+      - SERVER_WORLD=Scrublheim2026
+      - SERVER_PASSWORD=Scrubs2026
       - ENABLE_PLUGINS=true
+      - ENABLE_CROSSPLAY=false
+      - Server_VISIBILITY=1
+      - SERVER_SAVE_INTERVAL=1800
+      - SERVER_BACKUPS=6
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server
