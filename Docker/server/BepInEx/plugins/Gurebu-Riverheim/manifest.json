@@ -1,0 +1,10 @@
+{
+    "name": "Riverheim",
+    "author": "Gurebu",
+    "version_number": "1.0.0",
+    "website_url": "https://discord.gg/ES3J7mu6kW",
+    "description": "A comprehensive world generation overhaul that adds larger continents, forking rivers, epic mountains, lakes and many other features.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2202"
+    ]
+}
