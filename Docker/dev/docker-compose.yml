@@ -17,7 +17,6 @@ services:
       - Server_VISIBILITY=1
       - SERVER_SAVE_INTERVAL=1800
       - SERVER_BACKUPS=6
-      - TZ=America/New_York
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server
