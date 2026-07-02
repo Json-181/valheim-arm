@@ -1,0 +1,9 @@
+{
+    "name": "Network",
+    "version_number": "1.0.2",
+    "website_url": "https://github.com/blaxxun-boop/Network",
+    "description": "Uncaps the sending and receiving limit for network traffic.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2202"
+    ]
+}
