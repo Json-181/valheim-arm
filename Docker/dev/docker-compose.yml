@@ -17,6 +17,8 @@ services:
       - Server_VISIBILITY=1
       - SERVER_SAVE_INTERVAL=1800
       - SERVER_BACKUPS=6
+      - UPDATE_ALLOWED=false
+      - LOCKED_BETA_BRANCH=default_public
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server
