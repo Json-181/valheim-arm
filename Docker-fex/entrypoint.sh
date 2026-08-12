@@ -27,7 +27,7 @@ echo " "
 # ============================================================================
 # VERSION LOCK CONFIGURATION USING STEAM BETA BRANCHES
 # ============================================================================
-LOCKED_BETA_BRANCH="default_public"  # Change to your desired beta branch
+LOCKED_BETA_BRANCH="public"  # Change to your desired beta branch
 UPDATE_ALLOWED="${UPDATE_ALLOWED:-true}"
 
 echo ""

@@ -28,6 +28,19 @@ Autosave works correctly when using docker stop.
 - `SERVER_BACKUPS` - How many automatic backups will be kept (Default: 4)
 - `SERVER_BACKUP_SHORT` - The interval between the first automatic backups (Default: 7200)
 - `SERVER_BACKUP_LONG` - The interval between the subsequent automatic backups (Default: 43200)
+- `UPDATE_ALLOWED` - Allows for Steam to auto update on startup. (Default: "true")
+- `LOCKED_BETA_BRANCH` - Locks the update version to the stated Steam branch (Default: "public")
+
+
+### Locked Branch flags
+
+| LOCKED_BETA_BRANCH Flag | About |
+| :--- | :--- |
+| public | Latest public version (Feb 19, 2026) |
+| default_old | Previous stable (Feb 2, 2026) |
+| default_preal | Before Ashlands (Oct 3, 2025) |
+| default_prebw | Before Bog Witch (Oct 3, 2025) |
+| default_precta | Before Call to Arms (Oct 3, 2025) |
 
 ### Ports
 
