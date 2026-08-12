@@ -1,0 +1,8 @@
+{
+  "worlds": {
+    "ExampleSeasonsWorld": {
+      "startTimeUTC": "2026-08-11T07:03:24.9820681Z",
+      "dayLengthSeconds": 86400
+    }
+  }
+}

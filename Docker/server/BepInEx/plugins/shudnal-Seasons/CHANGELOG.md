@@ -1,3 +1,24 @@
+# 1.8.2
+* updated Expand World Data compatibility for the current environment and biome reload lifecycle
+* preserved EWD biome environment key conditions and custom biome names when seasonal weather rules are applied
+* fixed seasonal replacement environments retaining stale runtime references
+* fixed changing Control environments at runtime not fully restoring or reapplying biome weather tables
+* fixed runtime custom environment reloads leaving biome entries with unresolved environment references
+
+# 1.8.1
+* fixed visuals for couple of configs
+* updated english localization json file in thunderstore package
+
+# 1.8.0
+* migrated configuration and runtime state synchronization from ServerSync to ConditionalConfigSync; server administrators can override the ownership policy of policy-controlled settings
+* new mechanic: Summer Heat. Adds a heat meter with mild warmth bonuses, overheating penalties and configurable visual effects during the hottest summer days
+* new summer UI color
+* localizations revised
+* better ExpandWorldData environment compatibility
+* fixed respawning issue with pickables not meant to be respawned
+* normal fish should be pushed under the ice in any circumstances, fish dropped from inventory should stay
+* many optimizations and little fixes for smoother experience
+
 # 1.7.9
 * patch 0.221.10
 

@@ -1,0 +1,26 @@
+join:
+  - command: say Welcome to Scrublheim <name>!
+    log: false
+
+join:
+  - command: event army_eikthyr <x> <z>
+    chance: 0.01
+
+timezone: UTC
+# Jobs checked every minute.
+interval: 60
+jobs:
+  - command: broadcast center <color=orange>WARNING - REBOOT IN 5 MINUTES - PLEASE LOG OUT</color>
+    # At 02:55 Every Morning.
+    schedule: "55 7 * * *"
+  - command: broadcast center <color=orange>WARNING - REBOOT IN 4 MINUTES - PLEASE LOG OUT</color>
+    schedule: "56 7 * * *"
+  - command: broadcast center <color=orange>WARNING - REBOOT IN 3 MINUTES - PLEASE LOG OUT</color>
+    schedule: "57 7 * * *"
+  - command: broadcast center <color=orange>WARNING - REBOOT IN 2 MINUTES - PLEASE LOG OUT</color>
+    schedule: "58 7 * * *"
+  - commands: 
+    - broadcast center <color=orange>WARNING - REBOOT IN 1 MINUTE - PLEASE LOG OUT</color>
+    - save
+    schedule: "59 7 * * *"
+    # Hosting service configured to reboot at 03:00 Every Morning.

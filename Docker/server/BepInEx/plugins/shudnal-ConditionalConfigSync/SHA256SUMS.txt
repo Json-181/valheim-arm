@@ -1,0 +1,2 @@
+892ae2220bae4cbb6c664cca1151ccae3d79ff6506aa0a70e4a0049d319d541f  ConditionalConfigSync.Plugin.dll
+58e526fb0a7a1a90bdd340fe6efc1db1f88489c537bf8ec1e068527fd58af94f  ConditionalConfigSync.dll

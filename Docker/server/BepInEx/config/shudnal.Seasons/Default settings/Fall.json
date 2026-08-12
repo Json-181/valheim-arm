@@ -2,7 +2,7 @@
   "daysInSeason": 10,
   "nightLength": 30,
   "torchAsFiresource": true,
-  "torchDurabilityDrain": 0.03,
+  "torchDurabilityDrain": 0.1,
   "plantsGrowthMultiplier": 0.5,
   "beehiveProductionMultiplier": 1.5,
   "foodDrainMultiplier": 1.0,
