@@ -24,9 +24,40 @@ echo " "
 
 /print_app_versions.sh
 
-echo "Update"
-export SteamAppId=892970
-steamcmd.sh +force_install_dir ${SERVER} +login anonymous +app_update 896660 +quit
+# ============================================================================
+# VERSION LOCK CONFIGURATION (NEW - Lines 21-38)
+# ============================================================================
+VERSION_LOCK_FILE="${SERVER}/.version_lock"
+LOCKED_VERSION="0.221.12"
+UPDATE_ALLOWED="${UPDATE_ALLOWED:-true}"
+
+echo ""
+if [ "$UPDATE_ALLOWED" = "false" ]; then
+    echo "🔒 UPDATES DISABLED - Server locked at version ${LOCKED_VERSION}"
+    
+    # Verify we have the correct version installed
+    if [ -f "${SERVER}/appmanifest_896660.acf" ]; then
+        INSTALLED_VER=$(grep "Version=" "${SERVER}/appmanifest_896660.acf" | cut -d'"' -f2)
+        
+        echo "Installed version: ${INSTALLED_VER:-unknown}"
+        echo "Expected version:  ${LOCKED_VERSION}"
+        
+        if [ "$INSTALLED_VER" != "$LOCKED_VERSION" ]; then
+            echo "⚠️ WARNING: Version mismatch!"
+            echo "To update, set UPDATE_ALLOWED=true in docker-compose.yml and restart"
+        fi
+        
+    elif [ -f "${SERVER}/valheim_server.exe" ]; then
+        # Fallback to checking executable version string
+        VER=$(strings "${SERVER}/valheim_server.exe" 2>/dev/null | grep -E '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+        echo "Version from server binary: ${VER:-unknown}"
+    fi
+    
+    # Skip SteamCMD update when locked
+else
+    export SteamAppId=892970
+    steamcmd.sh +@sSteamCmdForcePlatformType windows +force_install_dir ${SERVER} +login anonymous +app_update 896660 validate +quit
+fi
 
 echo "Checking if BepInEx files need to be copied"
 mkdir -p "${SERVER}"
