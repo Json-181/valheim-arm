@@ -56,11 +56,12 @@ cron_match () {
 
 update_server () {
     echo "$(timestamp) INFO: Checking for update"
+    echo "$(timestamp) INFO: USE_PUBLIC_BETA=${USE_PUBLIC_BETA} BETA_BRANCH=${BETA_BRANCH:-<empty>} VALIDATE_ON_INSTALL=${VALIDATE_ON_INSTALL}"
     export SteamAppId=892970
     local -a beta_args=() validate_args=()
     # "public" isn't a real steamcmd branch name (it's just the live/default branch,
     # which needs no -beta flag at all) — only pass +set_beta for an actual named branch.
-    if [ "$USE_PUBLIC_BETA" = "1" ] && [ "$BETA_BRANCH" != "public" ]; then
+    if [ "$USE_PUBLIC_BETA" = "1" ] && [ -n "$BETA_BRANCH" ] && [ "$BETA_BRANCH" != "public" ]; then
         beta_args=(+set_beta "$BETA_BRANCH")
     fi
     [ "$VALIDATE_ON_INSTALL" = "1" ] && validate_args=(validate)
