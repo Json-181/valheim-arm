@@ -28,13 +28,28 @@ Autosave works correctly when using docker stop.
 - `SERVER_BACKUPS` - How many automatic backups will be kept (Default: 4)
 - `SERVER_BACKUP_SHORT` - The interval between the first automatic backups (Default: 7200)
 - `SERVER_BACKUP_LONG` - The interval between the subsequent automatic backups (Default: 43200)
-- `UPDATE_ALLOWED` - Allows for Steam to auto update on startup. (Default: "true")
-- `LOCKED_BETA_BRANCH` - Locks the update version to the stated Steam branch (Default: "public")
 
+### Update & restart scheduling
 
-### Locked Branch flags
+Modeled after [mbround18/valheim-docker](https://github.com/mbround18/valheim-docker#scheduled-restarts)'s scheduler, reimplemented in bash so it keeps using this project's wine/box64 and FEX-based arm64 server launch instead of a separate supervisor binary. Scheduled updates/restarts never exit the container — the entrypoint script gracefully stops the running server process and relaunches it in place, so `restart: unless-stopped` isn't what's doing the work here.
 
-| LOCKED_BETA_BRANCH Flag | About |
+- `UPDATE_ON_STARTUP` - Run a Steam update check when the container starts (Default: 1)
+- `AUTO_UPDATE` - Periodically re-check for updates while the server is running (Default: 0)
+- `AUTO_UPDATE_SCHEDULE` - Cron expression for the periodic check (Default: "0 1 * * *")
+- `AUTO_UPDATE_PAUSE_WITH_PLAYERS` - Skip a scheduled update if players are currently connected (Default: 0)
+- `VALIDATE_ON_INSTALL` - Pass `validate` to SteamCMD's `app_update` (Default: 1)
+- `USE_PUBLIC_BETA` - If `1`, lock installs to `BETA_BRANCH` via SteamCMD's `+set_beta`; if `0`, install whatever `app_update` serves by default (Default: 0)
+- `BETA_BRANCH` - Steam beta branch to lock to when `USE_PUBLIC_BETA=1` (Default: "public"). `public` is treated as "no branch lock" and never gets passed to `+set_beta` — it's not an actual Steam branch name, just this project's way of saying "use the live/default branch." Use one of the other names below (or a raw Steam branch name) to actually lock a version.
+- `SCHEDULED_RESTART` - Periodically restart the server process on a schedule (Default: 0)
+- `SCHEDULED_RESTART_SCHEDULE` - Cron expression for the restart (Default: "0 2 * * *")
+
+Cron expressions are 5-field (`minute hour day-of-month month day-of-week`) and support `*`, `*/n`, ranges (`a-b`), and comma lists — numeric fields only, no month/weekday names and no `@daily`-style macros.
+
+### Beta branch flags
+
+`BETA_BRANCH` accepts a raw Steam branch name, or one of the names predefined in `beta_branches.conf`:
+
+| Branch | About |
 | :--- | :--- |
 | public | Latest public version (Feb 19, 2026) |
 | default_old | Previous stable (Feb 2, 2026) |
@@ -82,6 +97,16 @@ services:
       - SERVER_PASSWORD=123456780
       - ENABLE_PLUGINS=false
       - ENABLE_CROSSPLAY=false
+      # Optional update/restart scheduling, see README for details:
+      # - UPDATE_ON_STARTUP=1
+      # - USE_PUBLIC_BETA=1
+      # - BETA_BRANCH=public
+      # - AUTO_UPDATE=0
+      # - AUTO_UPDATE_SCHEDULE=0 1 * * *
+      # - AUTO_UPDATE_PAUSE_WITH_PLAYERS=0
+      # - VALIDATE_ON_INSTALL=1
+      # - SCHEDULED_RESTART=0
+      # - SCHEDULED_RESTART_SCHEDULE=0 2 * * *
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server

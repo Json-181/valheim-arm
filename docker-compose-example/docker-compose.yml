@@ -13,6 +13,16 @@ services:
       - SERVER_PASSWORD=123456780
       - ENABLE_PLUGINS=false
       - ENABLE_CROSSPLAY=false
+      # Optional update/restart scheduling, see README for details:
+      # - UPDATE_ON_STARTUP=1
+      # - USE_PUBLIC_BETA=1
+      # - BETA_BRANCH=public
+      # - AUTO_UPDATE=0
+      # - AUTO_UPDATE_SCHEDULE=0 1 * * *
+      # - AUTO_UPDATE_PAUSE_WITH_PLAYERS=0
+      # - VALIDATE_ON_INSTALL=1
+      # - SCHEDULED_RESTART=0
+      # - SCHEDULED_RESTART_SCHEDULE=0 2 * * *
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server

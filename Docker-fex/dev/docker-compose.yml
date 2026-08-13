@@ -13,6 +13,13 @@ services:
       - SERVER_WORLD=tsx_world
       - SERVER_PASSWORD=123456780
       - ENABLE_PLUGINS=true
+      - UPDATE_ON_STARTUP=1
+      - USE_PUBLIC_BETA=1
+      - BETA_BRANCH=public
+      - AUTO_UPDATE=0
+      - "AUTO_UPDATE_SCHEDULE=0 1 * * *"
+      - SCHEDULED_RESTART=0
+      - "SCHEDULED_RESTART_SCHEDULE=0 2 * * *"
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server

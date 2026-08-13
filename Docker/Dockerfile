@@ -22,6 +22,8 @@ COPY server/ defaults/server/
 
 COPY emulators.rc .
 
+COPY --chmod=775 beta_branches.conf /beta_branches.conf
+
 COPY --chmod=775 load_emulators_env.sh /load_emulators_env.sh
 
 COPY --chmod=775 print_app_versions.sh /print_app_versions.sh
