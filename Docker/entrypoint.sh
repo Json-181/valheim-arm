@@ -73,6 +73,21 @@ update_server () {
                 +app_update 896660 "${validate_args[@]}" +quit
 }
 
+# Checks whether wine actually has /dev/ntsync open. Only meaningful once the
+# server process has launched — checking any earlier always reports "not
+# running" since nothing has had the chance to open it yet.
+check_ntsync_usage () {
+    if /sbin/lsmod | grep -q ntsync; then
+        if /usr/bin/lsof /dev/ntsync > /dev/null 2>&1; then
+            echo "$(timestamp) INFO: NTSYNC module is present in kernel, and the server is using it."
+        else
+            echo "$(timestamp) INFO: NTSYNC module is present in kernel, but the server isn't using it. No problem — ntsync is not necessary."
+        fi
+    else
+        echo "$(timestamp) INFO: NTSYNC module is NOT present in kernel. No problem — ntsync is not necessary."
+    fi
+}
+
 # Best-effort heuristic: compares connect/disconnect log line counts to guess if
 # anyone is currently online. Only used when AUTO_UPDATE_PAUSE_WITH_PLAYERS=1.
 players_online () {
@@ -214,18 +229,7 @@ echo " "
 echo "Checking NTSYNC"
 echo "The NTSYNC module has been present in the Linux kernel since version 6.14 and is usually included only in the generic kernel versions."
 echo "Kernel version on this machine is -- $(uname -r)"
-echo " "
-/usr/bin/lsof /dev/ntsync
-echo " "
-if /sbin/lsmod | grep -q ntsync; then
-  if /usr/bin/lsof /dev/ntsync > /dev/null 2>&1; then
-    echo "NTSYNC Module is present in kernel, ntsync is running."
-  else
-    echo "NTSYNC Module is present in kernel, but ntsync is NOT running. No problem — ntsync is not nessesary."
-  fi
-else
-  echo "NTSYNC Module is NOT present in kernel. No problem — ntsync is not nessesary."
-fi
+echo "(Whether the server actually uses it gets checked after it launches below, not here.)"
 echo " "
 
 echo "Wine configuration"
@@ -332,6 +336,10 @@ while true; do
         ((timeout++))
         echo "$(timestamp) INFO: Waiting for valheim_server.exe to be running"
     done
+
+    # Give wine a moment to finish opening its sync backend after the process appears
+    sleep 2
+    check_ntsync_usage
 
     echo " "
     # Hold us open until we receive SIGTERM or a scheduled action fires
