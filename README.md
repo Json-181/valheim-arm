@@ -80,6 +80,19 @@ https://github.com/FEX-Emu/FEX/blob/main/FEXCore/Source/Interface/Config/Config.
 | world              | /root/.config/unity3d/IronGate/Valheim | path that holds the persistent world files         |
 Place your plugins in the ./valheim/server/BepInEx/plugins folder.
 
+### Bundled plugins
+
+A few BepInEx mods ship in the image by default and drive the scheduling/notification features above. Once the server has booted once, their configs live under `./valheim/server/BepInEx/config/` on the host — the entrypoint script only copies defaults in on the very first boot against an empty volume, it won't overwrite your edits after that.
+
+| Plugin | Config file | What it does |
+| :--- | :--- | :--- |
+| [Cron Job](https://github.com/JereKuusela/valheim-cron_job) | `BepInEx/config/cron.yaml` | Runs scheduled/join-triggered server commands. Powers the join greeting, the hand-written reboot warnings, and the `SCHEDULED_RESTART` warning block `entrypoint.sh` auto-generates and appends here. |
+| [Server Devcommands](https://github.com/JereKuusela/valheim-dev) | `BepInEx/config/server_devcommands.cfg` | Adds server console commands, including `broadcast`/`say` which Cron Job uses to actually message players. **Requires `Server chat = true` under `[1. General]`** (default `false`) — without it, commands execute with no error logged anywhere, but nothing ever reaches players. Already set to `true` in this repo's default config. |
+| [DiscordConnector](https://discord-connector.valheim.games.nwest.one/) | `BepInEx/config/games.nwest.valheim.discordconnector/discordconnector.cfg` | Posts server lifecycle (`serverStart`/`serverStop`/...) and Cron Job (`cronjob`) events to a Discord webhook. Set via `DISCORD_WEBHOOK_URL` above rather than editing this file directly, so the secret never lands in git. |
+| [YamlDotNet](https://github.com/aaubry/YamlDotNet) | — | Library dependency Cron Job needs to parse `cron.yaml`. No config of its own. |
+
+Several other gameplay/world-generation mods (Riverheim, Seasons, Serverside Simulations, and others) are also bundled — see `Docker/server/BepInEx/plugins/` for the full list.
+
 ## docker-compose.yml
 
 ```yaml
@@ -129,7 +142,10 @@ https://www.reddit.com/r/valheim/comments/1m3d6my/valheim_server_mods_on_arm64_y
 ## Acknowledgments
 https://github.com/husjon/valheim_server_oci_setup  
 https://gitlab.com/tedtramonte/valheim-server  
-https://github.com/Kron4ek/Wine-Builds       
+https://github.com/Kron4ek/Wine-Builds  
+https://github.com/mbround18/valheim-docker (scheduled update/restart design)  
+https://github.com/JereKuusela (Cron Job, Server Devcommands)  
+https://github.com/nwesterhausen/valheim-discordconnector
 
 ## 
 Enjoying the project? A ⭐ goes a long way!
