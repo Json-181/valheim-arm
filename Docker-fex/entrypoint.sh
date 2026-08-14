@@ -83,6 +83,73 @@ players_online () {
     (( connects > disconnects ))
 }
 
+# Rewrites an auto-generated block in the valheim-cron plugin's cron.txt with
+# in-game "restart in N minutes" broadcasts, timed off SCHEDULED_RESTART_SCHEDULE.
+# entrypoint.sh has no channel into the running server itself (no RCON/stdin
+# commands) — this only works because valheim-cron reads cron.txt on its own
+# in-game schedule, so the warning has to be expressed as its own cron entry
+# a few minutes earlier, not triggered live at restart time.
+sync_restart_warnings () {
+    local cron_file="${SERVER}/BepInEx/plugins/valheim-cron/CronJob/cron.txt"
+    [ -f "$cron_file" ] || return 0
+
+    local begin_marker="# --- BEGIN AUTO-GENERATED SCHEDULED_RESTART WARNINGS ---"
+    local end_marker="# --- END AUTO-GENERATED SCHEDULED_RESTART WARNINGS ---"
+
+    if grep -qF "$begin_marker" "$cron_file"; then
+        # Substring match (not $0==b): a prior run may have appended the marker
+        # directly onto a file that didn't end in a newline, merging it onto
+        # the previous line, so an exact-equality match could miss it.
+        awk -v b="$begin_marker" -v e="$end_marker" '
+            index($0, b) {skip=1; next}
+            index($0, e) {skip=0; next}
+            skip!=1 {print}
+        ' "$cron_file" > "${cron_file}.tmp" && mv "${cron_file}.tmp" "$cron_file"
+    fi
+
+    [ "$SCHEDULED_RESTART" = "1" ] || return 0
+
+    local min hour dom month dow
+    read -r min hour dom month dow <<< "$SCHEDULED_RESTART_SCHEDULE"
+
+    if ! [[ "$min" =~ ^[0-9]+$ ]] || ! [[ "$hour" =~ ^[0-9]+$ ]]; then
+        echo "$(timestamp) INFO: SCHEDULED_RESTART_SCHEDULE isn't a single specific time (uses *, a range, or a list) - skipping the in-game restart warning"
+        return 0
+    fi
+
+    # Note: crossing midnight does not adjust dom/month/dow, so avoid scheduling
+    # restarts in the first hour of a day if dow/dom matter.
+    # Make sure we're not gluing onto an unterminated last line before appending.
+    [ -s "$cron_file" ] && [ -n "$(tail -c1 "$cron_file")" ] && echo >> "$cron_file"
+    {
+        echo "$begin_marker"
+        local offset total_min warn_min warn_hour label
+        for offset in 60 30 15 5 1; do
+            total_min=$(( hour * 60 + min - offset ))
+            total_min=$(( ((total_min % 1440) + 1440) % 1440 ))
+            warn_hour=$(( total_min / 60 ))
+            warn_min=$(( total_min % 60 ))
+
+            case "$offset" in
+                60) label="1 HOUR" ;;
+                1) label="1 MINUTE" ;;
+                *) label="${offset} MINUTES" ;;
+            esac
+
+            if [ "$offset" = "1" ]; then
+                printf '  - commands:\n    - broadcast center <color=orange>WARNING - SERVER RESTART IN %s</color>\n    - save\n    schedule: "%d %d %s %s %s"\n' \
+                    "$label" "$warn_min" "$warn_hour" "$dom" "$month" "$dow"
+            else
+                printf '  - command: broadcast center <color=orange>WARNING - SERVER RESTART IN %s</color>\n    schedule: "%d %d %s %s %s"\n' \
+                    "$label" "$warn_min" "$warn_hour" "$dom" "$month" "$dow"
+            fi
+        done
+        echo "$end_marker"
+    } >> "$cron_file"
+
+    echo "$(timestamp) INFO: Updated in-game restart warning schedule in cron.txt"
+}
+
 shutdown_requested=0
 valheim_pid=""
 
@@ -166,6 +233,8 @@ while true; do
         echo "The folder ${SERVER}/BepInEx already exists, copying is not needed."
     fi
     echo " "
+
+    sync_restart_warnings
 
     echo "Starting server PRESS CTRL-C to exit"
     echo " "

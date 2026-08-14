@@ -1,10 +1,8 @@
 join:
   - command: say Welcome to Scrublheim <name>!
     log: false
-
-join:
   - command: event army_eikthyr <x> <z>
-    chance: 0.01
+    chance: 0.05
 
 timezone: UTC
 # Jobs checked every minute.

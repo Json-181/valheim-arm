@@ -23,7 +23,7 @@ services:
       - AUTO_UPDATE=0
       - "AUTO_UPDATE_SCHEDULE=0 1 * * *"
       - SCHEDULED_RESTART=0
-      - "SCHEDULED_RESTART_SCHEDULE=0 2 * * *"
+      - "SCHEDULED_RESTART_SCHEDULE=0 3 * * *"
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server
