@@ -1,6 +1,6 @@
 join:
   - command: broadcast center Welcome to Scrublheim <name>!
-    log: true
+    log: false
   - command: event army_eikthyr <x> <z>
     chance: 0.05
 
