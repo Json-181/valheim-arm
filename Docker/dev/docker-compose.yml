@@ -30,5 +30,5 @@ services:
       - ./valheim/persistentdata/:/root/.config/unity3d/IronGate/Valheim
     #This is required for ntsync to work inside Docker.
     #If ntsync support is not enabled in your Linux kernel, comment out this section, otherwise Docker Compose won't start.
-#    devices:
-#      - /dev/ntsync:/dev/ntsync
+    devices:
+      - /dev/ntsync:/dev/ntsync
