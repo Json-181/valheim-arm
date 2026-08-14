@@ -59,6 +59,15 @@ update_server () {
     echo "$(timestamp) INFO: Checking for update"
     echo "$(timestamp) INFO: USE_PUBLIC_BETA=${USE_PUBLIC_BETA} BETA_BRANCH=${BETA_BRANCH:-<empty>} VALIDATE_ON_INSTALL=${VALIDATE_ON_INSTALL}"
     export SteamAppId=892970
+
+    # SteamCMD self-updates on its first real run and restarts itself mid-session
+    # to apply it — if +app_update is queued in that same session, it can fail with
+    # "Missing configuration" because the appinfo isn't cached yet. Priming with a
+    # bare +quit first lets the self-update finish and exit cleanly on its own, so
+    # the real update below always starts with SteamCMD already current. Cheap when
+    # already up to date — just a version check and exit.
+    steamcmd.sh +quit
+
     local -a beta_args=() validate_args=()
     # "public" isn't a real steamcmd branch name (it's just the live/default branch,
     # which needs no -beta flag at all) — only pass +set_beta for an actual named branch.
@@ -227,7 +236,12 @@ first_iteration=1
 
 while true; do
     if [ "$first_iteration" = "1" ]; then
-        [ "$UPDATE_ON_STARTUP" = "1" ] && update_server
+        if [ ! -f "${SERVER}/valheim_server.x86_64" ]; then
+            echo "$(timestamp) INFO: No install found yet, installing regardless of UPDATE_ON_STARTUP"
+            update_server
+        elif [ "$UPDATE_ON_STARTUP" = "1" ]; then
+            update_server
+        fi
         first_iteration=0
     elif [ -f /tmp/.pending_update ]; then
         rm -f /tmp/.pending_update
