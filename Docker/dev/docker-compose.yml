@@ -17,11 +17,18 @@ services:
       - Server_VISIBILITY=1
       - SERVER_SAVE_INTERVAL=1800
       - SERVER_BACKUPS=6
+      - UPDATE_ON_STARTUP=1
+      - USE_PUBLIC_BETA=1
+      - BETA_BRANCH=public
+      - AUTO_UPDATE=0
+      - "AUTO_UPDATE_SCHEDULE=0 1 * * *"
+      - SCHEDULED_RESTART=0
+      - "SCHEDULED_RESTART_SCHEDULE=0 3 * * *"
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server
       - ./valheim/persistentdata/:/root/.config/unity3d/IronGate/Valheim
     #This is required for ntsync to work inside Docker.
     #If ntsync support is not enabled in your Linux kernel, comment out this section, otherwise Docker Compose won't start.
-#    devices:
-#      - /dev/ntsync:/dev/ntsync
+    devices:
+      - /dev/ntsync:/dev/ntsync
