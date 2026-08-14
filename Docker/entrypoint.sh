@@ -356,10 +356,22 @@ while true; do
     check_ntsync_usage
 
     echo " "
-    # Hold us open until we receive SIGTERM or a scheduled action fires
-    wait
+    # Hold us open until the server exits — deliberately, or by crashing.
+    # `wait -n` (not bare `wait`) waits for just the NEXT background job to
+    # finish, not all of them: a bare `wait` would block on Xvfb too, which
+    # runs forever, so a spontaneous crash of only the server process would
+    # never be noticed (container looks "Up"/healthy while the game is a
+    # dead ghost process). `wait -n` still keeps the property a bare `wait`
+    # has and a plain foreground command doesn't: an incoming trapped signal
+    # (TERM/USR1) interrupts it immediately so shutdown()/scheduled_action()
+    # can run right away — a foreground `tail --pid` alone would defer the
+    # trap until tail exits, which can't happen until the trap (not yet run)
+    # kills the process, i.e. a deadlock on every shutdown/scheduled restart.
+    wait -n
 
-    # kill -2 above is a graceful request, not instant — make sure it's actually gone
+    # kill -2 above is a graceful request, not instant — make sure it's
+    # actually gone, and this is the definitive check if wait -n returned
+    # because some other job (not the server) finished instead.
     tail --pid=$valheim_pid -f /dev/null
 
     if [ "$shutdown_requested" = "1" ]; then
