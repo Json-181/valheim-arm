@@ -90,7 +90,7 @@ players_online () {
 # in-game schedule, so the warning has to be expressed as its own cron entry
 # a few minutes earlier, not triggered live at restart time.
 sync_restart_warnings () {
-    local cron_file="${SERVER}/BepInEx/plugins/valheim-cron/CronJob/cron.txt"
+    local cron_file="${SERVER}/BepInEx/config/cron.yaml"
     [ -f "$cron_file" ] || return 0
 
     local begin_marker="# --- BEGIN AUTO-GENERATED SCHEDULED_RESTART WARNINGS ---"

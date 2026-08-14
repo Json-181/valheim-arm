@@ -1,5 +1,5 @@
 join:
-  - command: say Welcome to Scrublheim <name>!
+  - command: broadcast center Welcome to Scrublheim <name>!
     log: false
   - command: event army_eikthyr <x> <z>
     chance: 0.05
@@ -17,7 +17,7 @@ jobs:
     schedule: "57 7 * * *"
   - command: broadcast center <color=orange>WARNING - REBOOT IN 2 MINUTES - PLEASE LOG OUT</color>
     schedule: "58 7 * * *"
-  - commands: 
+  - commands:
     - broadcast center <color=orange>WARNING - REBOOT IN 1 MINUTE - PLEASE LOG OUT</color>
     - save
     schedule: "59 7 * * *"
