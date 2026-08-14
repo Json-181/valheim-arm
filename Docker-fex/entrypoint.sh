@@ -16,6 +16,7 @@ USE_PUBLIC_BETA="${USE_PUBLIC_BETA:-0}"
 BETA_BRANCH="${BETA_BRANCH:-$BETA_DEFAULT}"
 SCHEDULED_RESTART="${SCHEDULED_RESTART:-0}"
 SCHEDULED_RESTART_SCHEDULE="${SCHEDULED_RESTART_SCHEDULE:-0 2 * * *}"
+DISCORD_WEBHOOK_URL="${DISCORD_WEBHOOK_URL:-}"
 
 # Quick function to generate a timestamp
 timestamp () {
@@ -147,7 +148,16 @@ sync_restart_warnings () {
         echo "$end_marker"
     } >> "$cron_file"
 
-    echo "$(timestamp) INFO: Updated in-game restart warning schedule in cron.txt"
+    echo "$(timestamp) INFO: Updated in-game restart warning schedule in cron.yaml"
+}
+
+# Writes DISCORD_WEBHOOK_URL into DiscordConnector's config so it stays out of the repo/image.
+# Event routing (serverLifecycle;cronjob) is set in the committed default config, not here.
+sync_discord_webhook () {
+    [ -n "$DISCORD_WEBHOOK_URL" ] || return 0
+    local cfg_file="${SERVER}/BepInEx/config/games.nwest.valheim.discordconnector/discordconnector.cfg"
+    [ -f "$cfg_file" ] || return 0
+    sed -i "s#^Webhook URL[[:space:]]*=.*#Webhook URL = ${DISCORD_WEBHOOK_URL}#" "$cfg_file"
 }
 
 shutdown_requested=0
@@ -235,6 +245,7 @@ while true; do
     echo " "
 
     sync_restart_warnings
+    sync_discord_webhook
 
     echo "Starting server PRESS CTRL-C to exit"
     echo " "

@@ -23,6 +23,8 @@ services:
       # - VALIDATE_ON_INSTALL=1
       # - SCHEDULED_RESTART=0
       # - SCHEDULED_RESTART_SCHEDULE=0 2 * * *
+      # Optional Discord notifications, see README - never commit a real webhook URL:
+      # - DISCORD_WEBHOOK_URL=
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server

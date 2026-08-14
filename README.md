@@ -42,6 +42,7 @@ Modeled after [mbround18/valheim-docker](https://github.com/mbround18/valheim-do
 - `BETA_BRANCH` - Steam beta branch to lock to when `USE_PUBLIC_BETA=1` (Default: "public"). `public` is treated as "no branch lock" and never gets passed to `+set_beta` — it's not an actual Steam branch name, just this project's way of saying "use the live/default branch." Use one of the other names below (or a raw Steam branch name) to actually lock a version.
 - `SCHEDULED_RESTART` - Periodically restart the server process on a schedule (Default: 0)
 - `SCHEDULED_RESTART_SCHEDULE` - Cron expression for the restart (Default: "0 2 * * *")
+- `DISCORD_WEBHOOK_URL` - If set, posts server start/stop and cron job (restart warnings, greeting, etc.) events to this Discord webhook via the bundled [DiscordConnector](https://discord-connector.valheim.games.nwest.one/) mod. Left unset by default — **never commit a real webhook URL to this repo**, set it as an environment variable on your host/compose file instead. A `serverStart` message after a `serverStop` message is the signal that a scheduled restart actually succeeded.
 
 Cron expressions are 5-field (`minute hour day-of-month month day-of-week`) and support `*`, `*/n`, ranges (`a-b`), and comma lists — numeric fields only, no month/weekday names and no `@daily`-style macros.
 
@@ -107,6 +108,8 @@ services:
       # - VALIDATE_ON_INSTALL=1
       # - SCHEDULED_RESTART=0
       # - SCHEDULED_RESTART_SCHEDULE=0 2 * * *
+      # Optional Discord notifications, see README - never commit a real webhook URL:
+      # - DISCORD_WEBHOOK_URL=
     volumes:
       # Bind mount, to access the files directly on the host
       - ./valheim/server/:/root/valheim-server
