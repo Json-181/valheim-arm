@@ -4,13 +4,24 @@ The goal of this build is to enable running Valheim with mods, on both arm64 and
 In the logs folder, you can find startup logs of Valheim on the arm64 platform (Ampere Altra CPU).
 The docker-compose-example folder contains a quickstart setup to launch.
 
-Important note! ntsync support is available only in the latest Ubuntu version — 25.04, and even then it must be manually enabled.
-The build works perfectly fine without ntsync — the only thing you need to do is comment out the following two lines in your docker-compose file:
+Important note! ntsync support is available only in the latest Ubuntu version — 25.04, and even then it must be manually enabled on the host, with the `ntsync` kernel module loaded (`lsmod | grep ntsync`).
+The build works perfectly fine without ntsync — the example docker-compose files ship with the device mapping commented out by default. If your host supports it, uncomment these two lines to pass `/dev/ntsync` through to the container:
 ```yaml
-    #devices:
-    #  - /dev/ntsync:/dev/ntsync
+    devices:
+      - /dev/ntsync:/dev/ntsync
 ```
+This needs a full `docker compose down` + `up` to take effect, not just a restart — device passthrough is set at container creation time, not something a running container can pick up. The entrypoint script confirms whether ntsync is *actually* being used (not just available) right after the server process launches each time — look for `NTSYNC module is present in kernel, and the server is using it.` in the logs.
+
 Autosave works correctly when using docker stop.
+
+### Which build should I use?
+
+Two builds exist, both sharing the same `entrypoint.sh` scheduling/plugin logic:
+
+- **`Docker/`** (recommended) — runs the Windows Valheim build through Wine, translated to arm64 via box64. This is the actively tested path — everything else in this README (Cron Job scheduling, DiscordConnector, NTSYNC, etc.) has been confirmed working here.
+- **`Docker-fex/`** — runs the native Linux Valheim build directly through FEX-emu, skipping Wine/Windows API emulation entirely. A simpler translation stack, plausibly more stable, but currently missing most of the bundled plugins (`Docker-fex/server/BepInEx/plugins/` only has Server Devcommands and Display BepInEx Info — no Cron Job, DiscordConnector, YamlDotNet, Riverheim, Seasons, Serverside Simulations, or ConditionalConfigSync), and it hasn't been tested end-to-end. Riverheim in particular generated existing worlds' terrain, so switching without it risks world-generation compatibility issues.
+
+Stick with `Docker/` unless you're deliberately experimenting with `Docker-fex/` as a separate effort.
 
 ## Configuration
 
