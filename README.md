@@ -44,7 +44,7 @@ Stick with `Docker/` unless you're deliberately experimenting with `Docker-fex/`
 
 Modeled after [mbround18/valheim-docker](https://github.com/mbround18/valheim-docker#scheduled-restarts)'s scheduler, reimplemented in bash so it keeps using this project's wine/box64 and FEX-based arm64 server launch instead of a separate supervisor binary. Scheduled updates/restarts never exit the container — the entrypoint script gracefully stops the running server process and relaunches it in place, so `restart: unless-stopped` isn't what's doing the work here.
 
-- `UPDATE_ON_STARTUP` - Run a Steam update check when the container starts (Default: 1)
+- `UPDATE_ON_STARTUP` - Run a Steam update check when the container starts (Default: 1). Only applies once the server is already installed — on a fresh/empty volume the first install always happens regardless of this setting, since there'd otherwise be nothing to launch.
 - `AUTO_UPDATE` - Periodically re-check for updates while the server is running (Default: 0)
 - `AUTO_UPDATE_SCHEDULE` - Cron expression for the periodic check (Default: "0 1 * * *")
 - `AUTO_UPDATE_PAUSE_WITH_PLAYERS` - Skip a scheduled update if players are currently connected (Default: 0)

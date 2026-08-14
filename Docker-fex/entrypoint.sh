@@ -236,7 +236,12 @@ first_iteration=1
 
 while true; do
     if [ "$first_iteration" = "1" ]; then
-        [ "$UPDATE_ON_STARTUP" = "1" ] && update_server
+        if [ ! -f "${SERVER}/valheim_server.x86_64" ]; then
+            echo "$(timestamp) INFO: No install found yet, installing regardless of UPDATE_ON_STARTUP"
+            update_server
+        elif [ "$UPDATE_ON_STARTUP" = "1" ]; then
+            update_server
+        fi
         first_iteration=0
     elif [ -f /tmp/.pending_update ]; then
         rm -f /tmp/.pending_update
